@@ -8,8 +8,8 @@ pub struct Combinations {
 impl Combinations {
     pub fn new(bins: u8, max_items_per_bin: u8) -> Self {
         Self {
-            bins: bins,
-            max_items_per_bin: max_items_per_bin,
+            bins,
+            max_items_per_bin,
             iterations_num: u64::from(max_items_per_bin).pow(u32::from(bins)),
             current_iteration: 0,
         }
