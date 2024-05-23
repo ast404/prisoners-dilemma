@@ -67,11 +67,11 @@ fn alternate_move(game_move: Move) -> Move {
 }
 
 pub fn all_strategies() -> Vec<Box<dyn Strategy>> {
-    let mut strategies: Vec<Box<dyn Strategy>> = Vec::new();
-    strategies.push(Box::new(TitForTat {}));
-    strategies.push(Box::new(Naive {}));
-    strategies.push(Box::new(Nasty {}));
-    strategies.push(Box::new(GrimTrigger {}));
-    strategies.push(Box::new(Drunk {}));
-    strategies
+    vec![
+        Box::new(TitForTat {}),
+        Box::new(Naive {}),
+        Box::new(Nasty {}),
+        Box::new(GrimTrigger {}),
+        Box::new(Drunk {}),
+    ]
 }
