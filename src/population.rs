@@ -41,7 +41,7 @@ fn create_players<'a>(
         for j in 0..(player_counts[i] + 1) {
             players.push(Player::new(
                 &format!("{}_{}", strategies[i].name(), j),
-                &strategies[i],
+                strategies[i].as_ref(),
             ));
         }
     }
