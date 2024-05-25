@@ -4,6 +4,15 @@ pub enum Move {
     Defect,
 }
 
+impl Move {
+    pub fn oposite_move(&self) -> Self {
+        match *self {
+            Move::Collaborate => Move::Defect,
+            Move::Defect => Move::Collaborate,
+        }
+    }
+}
+
 pub struct Payoff {
     // From https://en.wikipedia.org/wiki/Prisoner%27s_dilemma#Generalized_form
     temptation_reward: u32,

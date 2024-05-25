@@ -54,15 +54,8 @@ impl Strategy for Drunk {
     fn play(&self, _past_games: &[GamePlay]) -> Move {
         match _past_games.last() {
             None => Move::Collaborate,
-            Some(last_game) => alternate_move(last_game.my_move),
+            Some(last_game) => last_game.my_move.oposite_move(),
         }
-    }
-}
-
-fn alternate_move(game_move: Move) -> Move {
-    match game_move {
-        Move::Collaborate => Move::Defect,
-        Move::Defect => Move::Collaborate,
     }
 }
 
