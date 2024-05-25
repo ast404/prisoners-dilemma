@@ -11,16 +11,16 @@ pub struct Player<'a> {
     pub name: String,
     score: u32,
     past_games: HashMap<String, Vec<GamePlay>>,
-    strategy: &'a Box<dyn Strategy>,
+    strategy: &'a dyn Strategy,
 }
 
 impl<'a> Player<'a> {
-    pub fn new(name: &str, strategy: &'a Box<dyn Strategy>) -> Self {
+    pub fn new(name: &str, strategy: &'a dyn Strategy) -> Self {
         Self {
             name: name.to_string(),
             score: 0,
             past_games: HashMap::new(),
-            strategy: strategy,
+            strategy,
         }
     }
 
