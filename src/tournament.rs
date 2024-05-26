@@ -3,16 +3,26 @@ use crate::player::{self, Player};
 
 const DEFAULT_ITERATIONS: u32 = 10;
 
-pub struct AllPairsTournament {
+pub struct Tournament {
     payoff: Payoff,
     iterations: u32,
+    play_twin: bool,
 }
 
-impl AllPairsTournament {
-    pub fn new() -> Self {
+impl Tournament {
+    pub fn all_pairs() -> Self {
         Self {
             payoff: Payoff::default(),
             iterations: DEFAULT_ITERATIONS,
+            play_twin: false,
+        }
+    }
+
+    pub fn axelrod_tournament() -> Self {
+        Self {
+            payoff: Payoff::default(),
+            iterations: DEFAULT_ITERATIONS,
+            play_twin: true,
         }
     }
 
@@ -20,9 +30,11 @@ impl AllPairsTournament {
         for i in 0..players.len() {
             let (left, right) = players.split_at_mut(i + 1);
             for j in 0..right.len() {
-                for _ in 0..self.iterations {
-                    player::play_game(&mut left[i], &mut right[j], &self.payoff)
-                }
+                player::play_games(&mut left[i], &mut right[j], &self.payoff, self.iterations);
+            }
+            if self.play_twin {
+                let mut twin = left[i].twin();
+                player::play_games(&mut left[i], &mut twin, &self.payoff, self.iterations)
             }
         }
     }

@@ -1,19 +1,20 @@
 use crate::combinatorics::Combinations;
 use crate::player::Player;
 use crate::strategy::Strategy;
-use crate::tournament::AllPairsTournament;
+use crate::tournament::Tournament;
 use std::collections::HashMap;
 
 pub fn simulate_populations(
     strategies: &[Box<dyn Strategy>],
     max_player_instances: u8,
+    tournament: &Tournament,
 ) -> HashMap<String, u32> {
     let mut strategy_wins = HashMap::new();
     let all_combinations =
         Combinations::new(strategies.len().try_into().unwrap(), max_player_instances);
     for player_counts in all_combinations {
         let mut players = create_players(strategies, &player_counts);
-        let winning_strategy = get_winning_strategy(&mut players);
+        let winning_strategy = get_winning_strategy(&mut players, tournament);
         strategy_wins
             .entry(winning_strategy)
             .and_modify(|counter| *counter += 1)
@@ -22,8 +23,7 @@ pub fn simulate_populations(
     strategy_wins
 }
 
-fn get_winning_strategy(players: &mut [Player]) -> String {
-    let tournament = AllPairsTournament::new();
+fn get_winning_strategy(players: &mut [Player], tournament: &Tournament) -> String {
     tournament.play_games(players);
     let best_player = players.iter().max_by_key(|p| p.score());
     best_player.expect("at least one player").strategy_name()

@@ -24,6 +24,10 @@ impl<'a> Player<'a> {
         }
     }
 
+    pub fn twin(&self) -> Self {
+        Self::new(&format!("{}_twin", self.name), self.strategy)
+    }
+
     fn play(&mut self, with_player: &str) -> Move {
         let past_games = self
             .past_games
@@ -56,7 +60,13 @@ impl<'a> Player<'a> {
     }
 }
 
-pub fn play_game(p1: &mut Player, p2: &mut Player, payoff: &Payoff) {
+pub fn play_games(p1: &mut Player, p2: &mut Player, payoff: &Payoff, games_num: u32) {
+    for _ in 0..games_num {
+        play_game(p1, p2, payoff);
+    }
+}
+
+fn play_game(p1: &mut Player, p2: &mut Player, payoff: &Payoff) {
     let p1_move = p1.play(&p2.name());
     let p2_move = p2.play(&p1.name());
     let score = payoff.compute_payoff(p1_move, p2_move);
