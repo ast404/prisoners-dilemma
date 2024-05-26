@@ -59,6 +59,17 @@ impl Strategy for Drunk {
     }
 }
 
+pub struct Random {}
+
+impl Strategy for Random {
+    fn play(&self, _past_games: &[GamePlay]) -> Move {
+        match rand::random::<bool>() {
+            true => Move::Collaborate,
+            false => Move::Defect,
+        }
+    }
+}
+
 pub fn all_strategies() -> Vec<Box<dyn Strategy>> {
     vec![
         Box::new(TitForTat {}),
@@ -66,5 +77,6 @@ pub fn all_strategies() -> Vec<Box<dyn Strategy>> {
         Box::new(Nasty {}),
         Box::new(GrimTrigger {}),
         Box::new(Drunk {}),
+        Box::new(Random {}),
     ]
 }
