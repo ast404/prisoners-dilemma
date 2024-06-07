@@ -1,15 +1,12 @@
+use std::iter::successors;
+
 fn fill_bins(iteration: u64, bins: u8, max_items_per_bin: u8) -> Vec<u8> {
-    let mut iteration = iteration;
-    let mut bin_sizes = Vec::new();
-    for _ in 0..bins {
-        bin_sizes.push(
-            (iteration % u64::from(max_items_per_bin))
-                .try_into()
-                .unwrap(),
-        );
-        iteration /= u64::from(max_items_per_bin);
-    }
-    bin_sizes
+    successors(Some(iteration), |current| {
+        Some(current / u64::from(max_items_per_bin))
+    })
+    .take(bins.into())
+    .map(|current| -> u8 { (current % u64::from(max_items_per_bin)).try_into().unwrap() })
+    .collect()
 }
 
 pub fn get_combinations(bins: u8, max_items_per_bin: u8) -> impl Iterator<Item = Vec<u8>> {
