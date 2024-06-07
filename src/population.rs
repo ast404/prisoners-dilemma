@@ -1,4 +1,4 @@
-use crate::combinatorics::Combinations;
+use crate::combinatorics;
 use crate::player::Player;
 use crate::strategy::Strategy;
 use crate::tournament::Tournament;
@@ -11,7 +11,7 @@ pub fn simulate_populations(
 ) -> HashMap<String, u32> {
     let mut strategy_wins = HashMap::new();
     let all_combinations =
-        Combinations::new(strategies.len().try_into().unwrap(), max_player_instances);
+        combinatorics::get_combinations(strategies.len().try_into().unwrap(), max_player_instances);
     for player_counts in all_combinations {
         let mut players = create_players(strategies, &player_counts);
         let winning_strategy = get_winning_strategy(&mut players, tournament);
