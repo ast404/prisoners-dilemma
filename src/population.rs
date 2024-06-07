@@ -36,14 +36,16 @@ fn create_players<'a>(
     if strategies.len() != player_counts.len() {
         panic!("player counts don't match the size of strategies");
     }
-    let mut players: Vec<Player> = Vec::new();
-    for i in 0..strategies.len() {
-        for j in 0..(player_counts[i] + 1) {
-            players.push(Player::new(
-                &format!("{}_{}", strategies[i].name(), j),
-                strategies[i].as_ref(),
-            ));
-        }
-    }
-    players
+    strategies
+        .iter()
+        .zip(player_counts.iter())
+        .flat_map(|(strategy, count)| {
+            std::iter::repeat(strategy)
+                .take((*count + 1).into())
+                .enumerate()
+        })
+        .map(|(i, strategy)| -> Player {
+            Player::new(&format!("{}_{}", strategy.name(), i), strategy.as_ref())
+        })
+        .collect()
 }
