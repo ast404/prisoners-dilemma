@@ -52,3 +52,47 @@ impl Payoff {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_payoff() -> Payoff {
+        Payoff::new(5, 3, 1, 0)
+    }
+
+    #[test]
+    fn compute_payoff_both_collaborate() {
+        let payoff = test_payoff();
+        assert_eq!(
+            payoff.compute_payoff(Move::Collaborate, Move::Collaborate),
+            (3, 3)
+        )
+    }
+
+    #[test]
+    fn compute_payoff_both_defect() {
+        let payoff = test_payoff();
+        assert_eq!(payoff.compute_payoff(Move::Defect, Move::Defect), (1, 1))
+    }
+
+    #[test]
+    fn compute_payoff_one_defect() {
+        let payoff = test_payoff();
+        assert_eq!(
+            payoff.compute_payoff(Move::Defect, Move::Collaborate),
+            (5, 0)
+        )
+    }
+
+    #[test]
+    fn compute_payoff_one_defects_simetric() {
+        let payoff = test_payoff();
+        let one_defects = payoff.compute_payoff(Move::Collaborate, Move::Defect);
+        let other_defects = payoff.compute_payoff(Move::Defect, Move::Collaborate);
+        assert_eq!(
+            (one_defects.0, one_defects.1),
+            (other_defects.1, other_defects.0)
+        );
+    }
+}

@@ -33,9 +33,11 @@ fn create_players<'a>(
     strategies: &'a [Box<dyn Strategy>],
     player_counts: &'a [u8],
 ) -> Vec<Player<'a>> {
-    if strategies.len() != player_counts.len() {
-        panic!("player counts don't match the size of strategies");
-    }
+    assert_eq!(
+        strategies.len(),
+        player_counts.len(),
+        "player counts don't match the size of strategies"
+    );
     strategies
         .iter()
         .zip(player_counts.iter())
