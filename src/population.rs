@@ -51,3 +51,52 @@ fn create_players<'a>(
         })
         .collect()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::strategy::naive::Naive;
+    use crate::strategy::nasty::Nasty;
+    use crate::strategy::tit_for_tat::TitForTat;
+    use crate::strategy::Strategy;
+
+    #[test]
+    fn naive_nasty() {
+        let strategies: Vec<Box<dyn Strategy>> = vec![Box::new(Naive {}), Box::new(Nasty {})];
+        let tournament = Tournament::all_pairs();
+        let strategy_wins =
+            simulate_populations(&strategies, /* max_player_instances= */ 4, &tournament);
+        assert_eq!(strategy_wins.len(), 1);
+        assert_eq!(
+            *strategy_wins
+                .get("simple_game::strategy::nasty::Nasty")
+                .unwrap(),
+            16
+        );
+    }
+
+    #[test]
+    fn naive_nasty_tit_for_tat() {
+        let strategies: Vec<Box<dyn Strategy>> = vec![
+            Box::new(Naive {}),
+            Box::new(Nasty {}),
+            Box::new(TitForTat {}),
+        ];
+        let tournament = Tournament::all_pairs();
+        let strategy_wins =
+            simulate_populations(&strategies, /* max_player_instances= */ 4, &tournament);
+        assert_eq!(strategy_wins.len(), 2);
+        assert_eq!(
+            *strategy_wins
+                .get("simple_game::strategy::nasty::Nasty")
+                .unwrap(),
+            52
+        );
+        assert_eq!(
+            *strategy_wins
+                .get("simple_game::strategy::tit_for_tat::TitForTat")
+                .unwrap(),
+            12
+        );
+    }
+}
