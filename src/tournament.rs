@@ -43,8 +43,8 @@ impl Tournament {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::player::GamePlay;
     use crate::game::Move;
+    use crate::player::GamePlay;
     use crate::strategy::Strategy;
 
     struct MockStrategy {
@@ -64,7 +64,7 @@ mod tests {
         };
         let tournament = Tournament::all_pairs();
         let mut players = vec![Player::new("single_player", &mock_strategy)];
-        tournament.play_games(& mut players);
+        tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 0);
     }
 
@@ -81,7 +81,7 @@ mod tests {
             Player::new("collaborate_player", &collaborate_strategy),
             Player::new("defect_player", &defect_strategy),
         ];
-        tournament.play_games(& mut players);
+        tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 0);
         assert_eq!(players[1].score(), 50);
     }
@@ -100,7 +100,7 @@ mod tests {
             Player::new("defect_player", &defect_strategy),
             Player::new("defect_player_2", &defect_strategy),
         ];
-        tournament.play_games(& mut players);
+        tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 0);
         assert_eq!(players[1].score(), 60);
         assert_eq!(players[2].score(), 60);
@@ -113,7 +113,7 @@ mod tests {
         };
         let tournament = Tournament::axelrod_tournament();
         let mut players = vec![Player::new("single_player", &mock_strategy)];
-        tournament.play_games(& mut players);
+        tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 10);
     }
 
@@ -131,7 +131,7 @@ mod tests {
             Player::new("defect_player", &defect_strategy),
             Player::new("defect_player_2", &defect_strategy),
         ];
-        tournament.play_games(& mut players);
+        tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 30);
         assert_eq!(players[1].score(), 70);
         assert_eq!(players[2].score(), 70);
