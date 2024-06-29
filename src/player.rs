@@ -1,6 +1,5 @@
 use crate::game::{Move, Payoff};
 use crate::strategy::Strategy;
-use core::cell::RefCell;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
@@ -79,6 +78,7 @@ fn play_game(p1: &mut Player, p2: &mut Player, payoff: &Payoff) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use core::cell::RefCell;
 
     struct MockStrategy {
         next_move: RefCell<Move>,
