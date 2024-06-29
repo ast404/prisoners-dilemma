@@ -43,43 +43,26 @@ impl Tournament {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::game::Move;
-    use crate::player::GamePlay;
-    use crate::strategy::Strategy;
-
-    struct MockStrategy {
-        next_move: Move,
-    }
-
-    impl Strategy for MockStrategy {
-        fn play(&self, _past_games: &[GamePlay]) -> Move {
-            self.next_move
-        }
-    }
+    use crate::strategy::naive::Naive;
+    use crate::strategy::nasty::Nasty;
 
     #[test]
     fn all_pairs_single_player() {
-        let mock_strategy = MockStrategy {
-            next_move: Move::Defect,
-        };
+        let nasty_strategy = Nasty {};
         let tournament = Tournament::all_pairs();
-        let mut players = vec![Player::new("single_player", &mock_strategy)];
+        let mut players = vec![Player::new("single_player", &nasty_strategy)];
         tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 0);
     }
 
     #[test]
     fn all_pairs_two_players() {
-        let collaborate_strategy = MockStrategy {
-            next_move: Move::Collaborate,
-        };
-        let defect_strategy = MockStrategy {
-            next_move: Move::Defect,
-        };
+        let nasty_strategy = Nasty {};
+        let naive_strategy = Naive {};
         let tournament = Tournament::all_pairs();
         let mut players = vec![
-            Player::new("collaborate_player", &collaborate_strategy),
-            Player::new("defect_player", &defect_strategy),
+            Player::new("naive_player", &naive_strategy),
+            Player::new("nasty_player", &nasty_strategy),
         ];
         tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 0);
@@ -88,17 +71,13 @@ mod tests {
 
     #[test]
     fn all_pairs_three_players() {
-        let collaborate_strategy = MockStrategy {
-            next_move: Move::Collaborate,
-        };
-        let defect_strategy = MockStrategy {
-            next_move: Move::Defect,
-        };
+        let nasty_strategy = Nasty {};
+        let naive_strategy = Naive {};
         let tournament = Tournament::all_pairs();
         let mut players = vec![
-            Player::new("collaborate_player", &collaborate_strategy),
-            Player::new("defect_player", &defect_strategy),
-            Player::new("defect_player_2", &defect_strategy),
+            Player::new("naive_player", &naive_strategy),
+            Player::new("nasty_player_1", &nasty_strategy),
+            Player::new("nasty_player_2", &nasty_strategy),
         ];
         tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 0);
@@ -108,28 +87,22 @@ mod tests {
 
     #[test]
     fn axelrod_single_player() {
-        let mock_strategy = MockStrategy {
-            next_move: Move::Defect,
-        };
+        let naive_strategy = Naive {};
         let tournament = Tournament::axelrod_tournament();
-        let mut players = vec![Player::new("single_player", &mock_strategy)];
+        let mut players = vec![Player::new("single_player", &naive_strategy)];
         tournament.play_games(&mut players);
-        assert_eq!(players[0].score(), 10);
+        assert_eq!(players[0].score(), 30);
     }
 
     #[test]
     fn axelrod_three_players() {
-        let collaborate_strategy = MockStrategy {
-            next_move: Move::Collaborate,
-        };
-        let defect_strategy = MockStrategy {
-            next_move: Move::Defect,
-        };
+        let nasty_strategy = Nasty {};
+        let naive_strategy = Naive {};
         let tournament = Tournament::axelrod_tournament();
         let mut players = vec![
-            Player::new("collaborate_player", &collaborate_strategy),
-            Player::new("defect_player", &defect_strategy),
-            Player::new("defect_player_2", &defect_strategy),
+            Player::new("naive_player", &naive_strategy),
+            Player::new("nasty_player_1", &nasty_strategy),
+            Player::new("nasty_player_2", &nasty_strategy),
         ];
         tournament.play_games(&mut players);
         assert_eq!(players[0].score(), 30);
