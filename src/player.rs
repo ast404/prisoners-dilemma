@@ -1,7 +1,9 @@
 use crate::game::{Move, Payoff};
 use crate::strategy::Strategy;
+use core::cell::RefCell;
 use std::collections::HashMap;
 
+#[derive(Debug, PartialEq)]
 pub struct GamePlay {
     pub my_move: Move,
     pub their_move: Move,
@@ -72,4 +74,170 @@ fn play_game(p1: &mut Player, p2: &mut Player, payoff: &Payoff) {
     let score = payoff.compute_payoff(p1_move, p2_move);
     p1.game_played(&p2.name(), p1_move, p2_move, score.0);
     p2.game_played(&p1.name(), p2_move, p1_move, score.1);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct MockStrategy {
+        next_move: RefCell<Move>,
+    }
+
+    impl Strategy for MockStrategy {
+        fn play(&self, _past_games: &[GamePlay]) -> Move {
+            *self.next_move.borrow()
+        }
+    }
+
+    fn test_payoff() -> Payoff {
+        Payoff::new(5, 3, 1, 0)
+    }
+
+    #[test]
+    fn player_and_stragety_name() {
+        let mock_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Defect),
+        };
+        let player = Player::new("test_player", &mock_strategy);
+        assert_eq!(player.name(), "test_player");
+        assert_eq!(
+            player.strategy_name(),
+            "simple_game::player::tests::MockStrategy"
+        );
+    }
+
+    #[test]
+    fn twin() {
+        let mock_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Defect),
+        };
+        let player = Player::new("test_player", &mock_strategy);
+        let twin = player.twin();
+        assert_eq!(twin.name(), "test_player_twin");
+        assert_eq!(
+            twin.strategy_name(),
+            "simple_game::player::tests::MockStrategy"
+        );
+        assert_eq!(
+            player.strategy_name(),
+            "simple_game::player::tests::MockStrategy"
+        );
+    }
+
+    #[test]
+    fn one_game_played() {
+        let defect_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Defect),
+        };
+        let mut defect_player = Player::new("defect_player", &defect_strategy);
+        let collaborate_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Collaborate),
+        };
+        let mut collaborate_player = Player::new("collaborate_player", &collaborate_strategy);
+        assert_eq!(defect_player.score, 0);
+        assert_eq!(collaborate_player.score, 0);
+        play_game(&mut defect_player, &mut collaborate_player, &test_payoff());
+        assert_eq!(defect_player.score, 5);
+        assert_eq!(
+            *defect_player.past_games.get("collaborate_player").unwrap(),
+            vec![GamePlay {
+                my_move: Move::Defect,
+                their_move: Move::Collaborate
+            }]
+        );
+        assert_eq!(collaborate_player.score, 0);
+        assert_eq!(
+            *collaborate_player.past_games.get("defect_player").unwrap(),
+            vec![GamePlay {
+                my_move: Move::Collaborate,
+                their_move: Move::Defect
+            }]
+        );
+    }
+
+    #[test]
+    fn consecutive_games_played() {
+        let defect_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Defect),
+        };
+        let mut defect_player = Player::new("defect_player", &defect_strategy);
+        let alternate_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Collaborate),
+        };
+        let mut alternate_player = Player::new("alternate_player", &alternate_strategy);
+        assert_eq!(defect_player.score, 0);
+        assert_eq!(alternate_player.score, 0);
+        play_game(&mut defect_player, &mut alternate_player, &test_payoff());
+        assert_eq!(defect_player.score, 5);
+        assert_eq!(alternate_player.score, 0);
+        alternate_strategy.next_move.replace(Move::Defect);
+        play_game(&mut defect_player, &mut alternate_player, &test_payoff());
+        assert_eq!(defect_player.score, 6);
+        assert_eq!(
+            *defect_player.past_games.get("alternate_player").unwrap(),
+            vec![
+                GamePlay {
+                    my_move: Move::Defect,
+                    their_move: Move::Collaborate
+                },
+                GamePlay {
+                    my_move: Move::Defect,
+                    their_move: Move::Defect
+                }
+            ]
+        );
+        assert_eq!(alternate_player.score, 1);
+        assert_eq!(
+            *alternate_player.past_games.get("defect_player").unwrap(),
+            vec![
+                GamePlay {
+                    my_move: Move::Collaborate,
+                    their_move: Move::Defect
+                },
+                GamePlay {
+                    my_move: Move::Defect,
+                    their_move: Move::Defect
+                }
+            ]
+        );
+    }
+
+    #[test]
+    fn games_played() {
+        let defect_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Defect),
+        };
+        let mut defect_player = Player::new("defect_player", &defect_strategy);
+        let collaborate_strategy = MockStrategy {
+            next_move: RefCell::new(Move::Collaborate),
+        };
+        let mut collaborate_player = Player::new("collaborate_player", &collaborate_strategy);
+        assert_eq!(defect_player.score, 0);
+        assert_eq!(collaborate_player.score, 0);
+        play_games(
+            &mut defect_player,
+            &mut collaborate_player,
+            &test_payoff(),
+            9,
+        );
+        assert_eq!(defect_player.score, 45);
+        assert_eq!(
+            defect_player
+                .past_games
+                .get("collaborate_player")
+                .unwrap()
+                .len(),
+            9
+        );
+        assert_eq!(collaborate_player.score, 0);
+        assert_eq!(
+            collaborate_player
+                .past_games
+                .get("defect_player")
+                .unwrap()
+                .len(),
+            9
+        );
+    }
 }
