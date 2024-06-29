@@ -101,10 +101,7 @@ mod tests {
         };
         let player = Player::new("test_player", &mock_strategy);
         assert_eq!(player.name(), "test_player");
-        assert_eq!(
-            player.strategy_name(),
-            "simple_game::player::tests::MockStrategy"
-        );
+        assert_eq!(player.strategy_name(), "MockStrategy");
     }
 
     #[test]
@@ -115,14 +112,8 @@ mod tests {
         let player = Player::new("test_player", &mock_strategy);
         let twin = player.twin();
         assert_eq!(twin.name(), "test_player_twin");
-        assert_eq!(
-            twin.strategy_name(),
-            "simple_game::player::tests::MockStrategy"
-        );
-        assert_eq!(
-            player.strategy_name(),
-            "simple_game::player::tests::MockStrategy"
-        );
+        assert_eq!(twin.strategy_name(), "MockStrategy");
+        assert_eq!(player.strategy_name(), "MockStrategy");
     }
 
     #[test]

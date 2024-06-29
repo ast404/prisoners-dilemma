@@ -67,12 +67,7 @@ mod tests {
         let strategy_wins =
             simulate_populations(&strategies, /* max_player_instances= */ 4, &tournament);
         assert_eq!(strategy_wins.len(), 1);
-        assert_eq!(
-            *strategy_wins
-                .get("simple_game::strategy::nasty::Nasty")
-                .unwrap(),
-            16
-        );
+        assert_eq!(*strategy_wins.get("Nasty").unwrap(), 16);
     }
 
     #[test]
@@ -86,17 +81,7 @@ mod tests {
         let strategy_wins =
             simulate_populations(&strategies, /* max_player_instances= */ 4, &tournament);
         assert_eq!(strategy_wins.len(), 2);
-        assert_eq!(
-            *strategy_wins
-                .get("simple_game::strategy::nasty::Nasty")
-                .unwrap(),
-            52
-        );
-        assert_eq!(
-            *strategy_wins
-                .get("simple_game::strategy::tit_for_tat::TitForTat")
-                .unwrap(),
-            12
-        );
+        assert_eq!(*strategy_wins.get("Nasty").unwrap(), 52);
+        assert_eq!(*strategy_wins.get("TitForTat").unwrap(), 12);
     }
 }

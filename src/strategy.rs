@@ -12,6 +12,10 @@ pub trait Strategy {
     fn play(&self, past_games: &[GamePlay]) -> Move;
     fn name(&self) -> String {
         format!("{}", std::any::type_name::<Self>())
+            .split("::")
+            .last()
+            .unwrap()
+            .to_string()
     }
 }
 
