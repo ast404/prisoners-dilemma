@@ -22,11 +22,11 @@ pub struct Payoff {
 }
 
 impl Payoff {
-    pub fn default() -> Self {
+    pub const fn default() -> Self {
         Self::new(5, 3, 1, 0)
     }
 
-    pub fn new(
+    pub const fn new(
         temptation_reward: u32,
         reward: u32,
         punishment: u32,

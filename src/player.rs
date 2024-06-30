@@ -80,6 +80,8 @@ mod tests {
     use super::*;
     use std::cell::Cell;
 
+    const TEST_PAYOFF: Payoff = Payoff::new(5, 3, 1, 0);
+
     struct MockStrategy {
         next_move: Cell<Move>,
     }
@@ -88,10 +90,6 @@ mod tests {
         fn play(&self, _past_games: &[GamePlay]) -> Move {
             self.next_move.get()
         }
-    }
-
-    fn test_payoff() -> Payoff {
-        Payoff::new(5, 3, 1, 0)
     }
 
     #[test]
@@ -128,7 +126,7 @@ mod tests {
         let mut collaborate_player = Player::new("collaborate_player", &collaborate_strategy);
         assert_eq!(defect_player.score, 0);
         assert_eq!(collaborate_player.score, 0);
-        play_game(&mut defect_player, &mut collaborate_player, &test_payoff());
+        play_game(&mut defect_player, &mut collaborate_player, &TEST_PAYOFF);
         assert_eq!(defect_player.score, 5);
         assert_eq!(
             *defect_player.past_games.get("collaborate_player").unwrap(),
@@ -159,11 +157,11 @@ mod tests {
         let mut alternate_player = Player::new("alternate_player", &alternate_strategy);
         assert_eq!(defect_player.score, 0);
         assert_eq!(alternate_player.score, 0);
-        play_game(&mut defect_player, &mut alternate_player, &test_payoff());
+        play_game(&mut defect_player, &mut alternate_player, &TEST_PAYOFF);
         assert_eq!(defect_player.score, 5);
         assert_eq!(alternate_player.score, 0);
         alternate_strategy.next_move.replace(Move::Defect);
-        play_game(&mut defect_player, &mut alternate_player, &test_payoff());
+        play_game(&mut defect_player, &mut alternate_player, &TEST_PAYOFF);
         assert_eq!(defect_player.score, 6);
         assert_eq!(
             *defect_player.past_games.get("alternate_player").unwrap(),
@@ -206,12 +204,7 @@ mod tests {
         let mut collaborate_player = Player::new("collaborate_player", &collaborate_strategy);
         assert_eq!(defect_player.score, 0);
         assert_eq!(collaborate_player.score, 0);
-        play_games(
-            &mut defect_player,
-            &mut collaborate_player,
-            &test_payoff(),
-            9,
-        );
+        play_games(&mut defect_player, &mut collaborate_player, &TEST_PAYOFF, 9);
         assert_eq!(defect_player.score, 45);
         assert_eq!(
             defect_player
