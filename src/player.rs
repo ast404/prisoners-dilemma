@@ -78,15 +78,15 @@ fn play_game(p1: &mut Player, p2: &mut Player, payoff: &Payoff) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::cell::RefCell;
+    use std::cell::Cell;
 
     struct MockStrategy {
-        next_move: RefCell<Move>,
+        next_move: Cell<Move>,
     }
 
     impl Strategy for MockStrategy {
         fn play(&self, _past_games: &[GamePlay]) -> Move {
-            *self.next_move.borrow()
+            self.next_move.get()
         }
     }
 
@@ -97,7 +97,7 @@ mod tests {
     #[test]
     fn player_and_stragety_name() {
         let mock_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Defect),
+            next_move: Cell::new(Move::Defect),
         };
         let player = Player::new("test_player", &mock_strategy);
         assert_eq!(player.name(), "test_player");
@@ -107,7 +107,7 @@ mod tests {
     #[test]
     fn twin() {
         let mock_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Defect),
+            next_move: Cell::new(Move::Defect),
         };
         let player = Player::new("test_player", &mock_strategy);
         let twin = player.twin();
@@ -119,11 +119,11 @@ mod tests {
     #[test]
     fn one_game_played() {
         let defect_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Defect),
+            next_move: Cell::new(Move::Defect),
         };
         let mut defect_player = Player::new("defect_player", &defect_strategy);
         let collaborate_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Collaborate),
+            next_move: Cell::new(Move::Collaborate),
         };
         let mut collaborate_player = Player::new("collaborate_player", &collaborate_strategy);
         assert_eq!(defect_player.score, 0);
@@ -150,11 +150,11 @@ mod tests {
     #[test]
     fn consecutive_games_played() {
         let defect_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Defect),
+            next_move: Cell::new(Move::Defect),
         };
         let mut defect_player = Player::new("defect_player", &defect_strategy);
         let alternate_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Collaborate),
+            next_move: Cell::new(Move::Collaborate),
         };
         let mut alternate_player = Player::new("alternate_player", &alternate_strategy);
         assert_eq!(defect_player.score, 0);
@@ -197,11 +197,11 @@ mod tests {
     #[test]
     fn games_played() {
         let defect_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Defect),
+            next_move: Cell::new(Move::Defect),
         };
         let mut defect_player = Player::new("defect_player", &defect_strategy);
         let collaborate_strategy = MockStrategy {
-            next_move: RefCell::new(Move::Collaborate),
+            next_move: Cell::new(Move::Collaborate),
         };
         let mut collaborate_player = Player::new("collaborate_player", &collaborate_strategy);
         assert_eq!(defect_player.score, 0);
