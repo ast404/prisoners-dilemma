@@ -93,7 +93,7 @@ mod tests {
     }
 
     #[test]
-    fn player_and_stragety_name() {
+    fn player_and_strategy_name() {
         let mock_strategy = MockStrategy {
             next_move: Cell::new(Move::Defect),
         };
@@ -129,7 +129,10 @@ mod tests {
         play_game(&mut defect_player, &mut collaborate_player, &TEST_PAYOFF);
         assert_eq!(defect_player.score, 5);
         assert_eq!(
-            *defect_player.past_games.get("collaborate_player").unwrap(),
+            *defect_player
+                .past_games
+                .get("collaborate_player")
+                .expect("collaborate_player in defect_player's past games"),
             vec![GamePlay {
                 my_move: Move::Defect,
                 their_move: Move::Collaborate
@@ -137,7 +140,10 @@ mod tests {
         );
         assert_eq!(collaborate_player.score, 0);
         assert_eq!(
-            *collaborate_player.past_games.get("defect_player").unwrap(),
+            *collaborate_player
+                .past_games
+                .get("defect_player")
+                .expect("defect_player in collaborate_player's past games"),
             vec![GamePlay {
                 my_move: Move::Collaborate,
                 their_move: Move::Defect
@@ -164,7 +170,10 @@ mod tests {
         play_game(&mut defect_player, &mut alternate_player, &TEST_PAYOFF);
         assert_eq!(defect_player.score, 6);
         assert_eq!(
-            *defect_player.past_games.get("alternate_player").unwrap(),
+            *defect_player
+                .past_games
+                .get("alternate_player")
+                .expect("alternate_player in defect_player's past games"),
             vec![
                 GamePlay {
                     my_move: Move::Defect,
@@ -178,7 +187,10 @@ mod tests {
         );
         assert_eq!(alternate_player.score, 1);
         assert_eq!(
-            *alternate_player.past_games.get("defect_player").unwrap(),
+            *alternate_player
+                .past_games
+                .get("defect_player")
+                .expect("defect_player in alternate_player's past games"),
             vec![
                 GamePlay {
                     my_move: Move::Collaborate,
@@ -210,7 +222,7 @@ mod tests {
             defect_player
                 .past_games
                 .get("collaborate_player")
-                .unwrap()
+                .expect("collaborate_player in defect_player's past games")
                 .len(),
             9
         );
@@ -219,7 +231,7 @@ mod tests {
             collaborate_player
                 .past_games
                 .get("defect_player")
-                .unwrap()
+                .expect("defect_player in collaborate_player's past games")
                 .len(),
             9
         );
